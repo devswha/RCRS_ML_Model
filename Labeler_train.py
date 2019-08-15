@@ -1,11 +1,11 @@
-from myModule import *
+from module.myModule_image import *
 
 mapName = ""
 GRID_COL = 0
 GRID_ROW = 0
 
 if not len(sys.argv) is 4:
-    print("Usage : python train_data_labeler.py [Map name][Grid row][Grid col]")
+    print("Usage : python Labeler_train.py [Map name][Grid row][Grid col]")
     exit(1)
 else:
     mapName = sys.argv[1]
@@ -20,21 +20,19 @@ LABEL = [[0]*GRID_COL for i in range(GRID_ROW)]
 # [ minX, maxX, minY, maxY ]
 GRID = [[[0, 0, 0, 0]]*GRID_COL for i in range(GRID_ROW)]
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
-if not os.path.exists("%s/%s/%s" % (MODELS_DIR, mapName, grid)):
-    os.makedirs("%s/%s/%s" % (MODELS_DIR, mapName, grid))
 
 # Log
 now = datetime.datetime.now().strftime("%d %H:%M:%S")
 print('[INFO][%s] Image label start' % now)
-print('[INFO] Data sets root: %s/%s' % (TRAIN_GENERATED_IMAGE_DIR, mapName))
-print('[INFO] Label %s #%d ~ #%d data sets' % (mapName, TRAIN_START_MAP_NUM, TRAIN_END_MAP_NUM))
+print('[INFO] Data sets root: %s/%s' % (LABEL_DATASET_DIR, mapName))
+print('[INFO] Label %s #%d ~ #%d data sets' % (mapName, LABEL_TRAIN_START_MAP_NUM, LABEL_TRAIN_END_MAP_NUM))
 
 # Filtering and Labeling the images
 # Filtering : crop and resize
 # Labeling : depend on the time step limit and civilians HP
 HPListIndex = 0
-for dataSetNum in range(TRAIN_START_MAP_NUM, TRAIN_END_MAP_NUM+1):
-    dataSetPath = "%s/%s/%s_%d" % (TRAIN_GENERATED_IMAGE_DIR, mapName, mapName, dataSetNum)
+for dataSetNum in range(LABEL_TRAIN_START_MAP_NUM, LABEL_TRAIN_END_MAP_NUM+1):
+    dataSetPath = "%s/raw/train/generated_image/%s/%s_%d" % (LABEL_DATASET_DIR, mapName, mapName, dataSetNum)
 
     # Read information files for labeling
     mapInfoFile = open("%s/Parse/mapInfo.txt" % dataSetPath, 'r')

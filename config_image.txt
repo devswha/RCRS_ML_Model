@@ -1,0 +1,32 @@
+###########################################################
+# Label constant
+###########################################################
+LIMIT_TIME_STEP 0
+LIMIT_CIVILIAN_HP 9000
+LABEL_TRAIN_START_MAP_NUM 1
+LABEL_TRAIN_END_MAP_NUM 10000
+LABEL_TEST_START_MAP_NUM 1
+LABEL_TEST_END_MAP_NUM 1000
+LABEL_DATASET_DIR ../dataset_FH
+
+###########################################################
+# Convert constant
+###########################################################
+CONVERT_TRAIN_START_MAP_NUM 1
+CONVERT_TRAIN_END_MAP_NUM 10000
+CONVERT_TEST_START_MAP_NUM 1
+CONVERT_TEST_END_MAP_NUM 10000
+CONVERT_DATASET_DIR ../dataset
+
+###########################################################
+# ML constant
+###########################################################
+MODEL_TRAIN_NAME InceptionResNet_v2_GAM
+MODEL_TRAIN_START_MAP_NUM 1
+MODEL_TRAIN_END_MAP_NUM 1000
+MODEL_TEST_NAME InceptionResNet_v2_GAM
+MODEL_TEST_START_MAP_NUM 1
+MODEL_TEST_END_MAP_NUM 1000
+MODELS_DIR ./model
+MODEL_DATASET_DIR ../dataset_FH
+RESULTS_DIR ./result

@@ -1,0 +1,35 @@
+###########################################################
+# CNN type of ML model
+###########################################################
+ResNet_50
+ResNet_101
+ResNet_152
+ResNeXt_50
+ResNeXt_101
+Inception_v3
+InceptionResNet_v2
+MobileNet
+DenseNet_121
+DenseNet_169
+DenseNet_201
+DenseNet_264
+Xception
+
+###########################################################
+# Attention Module
+###########################################################
+SE
+CBAM
+GCBAM
+
+###########################################################
+# Video-based
+###########################################################
+LSTM
+
+** You should input the name of ML model(MODEL_TRAIN/TEST_NAME) in the config_image.txt and config_video.txt.
+** The name of model should figure to [CNN type of ML model]_[Attention Module]_[Video-based].
+** [Video-based] and [Attention Module] is a option.
+** Example: Inception_v3, InceptionResNet_v2_LSTM, InceptionResNet_v2_CBAM, InceptionResNet_v2_CBAM_LSTM
+
+

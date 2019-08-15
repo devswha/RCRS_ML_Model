@@ -7,7 +7,7 @@ GRID_ROW = ""
 GRID_COL = ""
 
 if not len(sys.argv) is 4:
-    print("Usage : python train_dataset_converter.py [Map name][Grid row][Grid col]")
+    print("Usage : python Converter_test_image.py [Map name][Grid row][Grid col]")
     exit(1)
 else:
     mapName = sys.argv[1]
@@ -17,13 +17,13 @@ else:
 # Load path/class_id image file:
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
 
-npyDir = "%s/image/train/%s/%s" % (DATASET_DIR, mapName, grid)
+npyDir = "%s/image/test/%s/%s" % (DATASET_DIR, mapName, grid)
 if not os.path.exists(npyDir):
     os.makedirs(npyDir)
 
 
 #######################################
-# Create numpy training data
+# Create numpy testing data
 #######################################
 WIDTH = 256
 HEIGHT = 192
@@ -33,11 +33,11 @@ imageNumIndex = 0
 npyTrainImageData = []
 npyTrainLabelData = []
 
-for dataSetNum in range(TRAIN_START_MAP_NUM, TRAIN_END_MAP_NUM + 1):
+for dataSetNum in range(CONVERT_TEST_START_MAP_NUM, CONVERT_TEST_END_MAP_NUM + 1):
     # Select random time step
     pathList = []
     labelList = []
-    dataSetPath = "%s/%s/%s_%d" % (TRAIN_GENERATED_IMAGE_DIR, mapName, mapName, dataSetNum)
+    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (CONVERT_DATASET_DIR, mapName, mapName, dataSetNum)
     rawImgListFile = open("%s/Label/%s/ImageList.txt" % (dataSetPath, grid), "r")
     for line in rawImgListFile.readlines():
         pathList.append(line.split(' ')[0])
@@ -62,15 +62,15 @@ for dataSetNum in range(TRAIN_START_MAP_NUM, TRAIN_END_MAP_NUM + 1):
     imageNumIndex = imageNumIndex + 1
     if imageNumIndex == 100:
         # image
-        trainImageDataFile = "%s/train_data_image-%d.npy" % (npyDir, npyNumIndex)
-        np.save(trainImageDataFile, npyTrainImageData)
-        print(trainImageDataFile)
+        testImageDataFile = "%s/test_data_image-%d.npy" % (npyDir, npyNumIndex)
+        np.save(testImageDataFile, npyTrainImageData)
+        print(testImageDataFile)
         npyTrainImageData = []
 
         # label
-        trainLabelDataFile = "%s/train_data_label-%d.npy" % (npyDir, npyNumIndex)
-        np.save(trainLabelDataFile, npyTrainLabelData)
-        print(trainLabelDataFile)
+        testLabelDataFile = "%s/test_data_label-%d.npy" % (npyDir, npyNumIndex)
+        np.save(testLabelDataFile, npyTrainLabelData)
+        print(testLabelDataFile)
         npyTrainLabelData = []
 
         imageNumIndex = 0
