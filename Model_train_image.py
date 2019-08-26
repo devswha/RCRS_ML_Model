@@ -122,7 +122,7 @@ else:
 
 # Load path/class_id image file:
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
-npyDir = "%s/image/train/%s/%s" % (MODEL_DATASET_DIR, mapName, grid)
+npyDir = "%s/image/train/%s/%s" % (MODEL_TRAIN_DATASET_DIR, mapName, grid)
 if not os.path.exists("%s/image/%s" % (MODELS_DIR, mapName)):
     os.makedirs("%s/image/%s" % (MODELS_DIR, mapName))
 
@@ -131,7 +131,7 @@ if not os.path.exists("%s/image/%s" % (MODELS_DIR, mapName)):
 #####################################################
 
 batch_size = 8
-nb_epoch = 6
+nb_epoch = 15
 num_classes = GRID_ROW * GRID_COL
 WIDTH = 256
 HEIGHT = 192
@@ -157,33 +157,26 @@ modelName = MODEL_TRAIN_NAME
 model = callModel(modelName, HEIGHT, WIDTH, num_classes)
 print(modelName)
 
-save_dir = os.path.join(os.getcwd(), '%s/image/%s_saved_models' % (MODELS_DIR, grid))
+save_dir = os.path.join(os.getcwd(), '%s/image/%s/%s_saved_models' % (MODELS_DIR, mapName, grid))
 
 if not os.path.isdir(save_dir):
     os.makedirs(save_dir)
 filepath = os.path.join(save_dir, modelName)
 
-
-skf = KFold(n_splits=5, shuffle=True)
-accuracy = []
-for train, validation in skf.split(train_X, train_Y):
-    model.compile(optimizer=Adam(lr=lr_schedule(0)), loss='mean_squared_error', metrics=['mse'])
-    checkpoint = ModelCheckpoint(filepath=filepath,
+model.compile(optimizer=Adam(lr=lr_schedule(0)), loss='mean_squared_error', metrics=['mse'])
+checkpoint = ModelCheckpoint(filepath=filepath,
                              monitor='val_loss',
                              verbose=1,
                              save_best_only=True)
 
-    lr_scheduler = LearningRateScheduler(lr_schedule)
-    lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+lr_scheduler = LearningRateScheduler(lr_schedule)
+lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                cooldown=0,
                                patience=5,
                                min_lr=0.5e-6)
-
-    callbacks = [checkpoint, lr_reducer, lr_scheduler]
-    hist = model.fit(train_X[train], train_Y[train], validation_data=(train_X[validation], train_Y[validation]),
+callbacks = [checkpoint, lr_reducer, lr_scheduler]
+early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=0,
+                                               mode='auto', baseline=None, restore_best_weights=True)
+history = model.fit(train_X, train_Y, validation_split=0.2,
                      shuffle=True, callbacks=callbacks, epochs=nb_epoch, batch_size=batch_size)
-    k_accuracy = '%.4f' % (model.evaluate(train_X[validation], train_Y[validation])[1])
-    accuracy.append(k_accuracy) 
 model.save("%s/image/%s/%s_%s.h5" % (MODELS_DIR, mapName, grid, modelName))
-
-

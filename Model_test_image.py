@@ -25,9 +25,9 @@ else:
     GRID_ROW = int(sys.argv[2])
     GRID_COL = int(sys.argv[3])
 
-now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
-npyDir = "%s/image/test/%s/%s" % (MODEL_DATASET_DIR, mapName, grid)
+npyDir = "%s/image/test/%s/%s" % (MODEL_TEST_DATASET_DIR, mapName, grid)
 
 if not os.path.exists("%s/image/%s" % (RESULTS_DIR, mapName)):
     os.makedirs("%s/image/%s" % (RESULTS_DIR, mapName))
@@ -56,9 +56,9 @@ print("test_Y shape: ", test_Y.shape)
 WIDTH = 256
 HEIGHT = 192
 num_classes = GRID_COL * GRID_ROW
-modelName = MODEL_TEST_END_MAP_NUM
+modelName = MODEL_TEST_NAME
 with CustomObjectScope({'relu6': keras.layers.advanced_activations.ReLU(6.),'DepthwiseConv2D': keras.layers.DepthwiseConv2D}):
-    model = keras.models.load_model("%s/image/%s/%s/%s.h5" % (MODELS_DIR, mapName, grid, modelName), compile=False)
+    model = keras.models.load_model("%s/image/%s/%s_saved_models/%s" % (MODELS_DIR, mapName, grid, modelName), compile=False)
 
 # Print model's summary and prediction accuracy
 predictions = model.predict(test_X)

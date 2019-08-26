@@ -1,4 +1,4 @@
-from module.myModule import *
+from module.myModule_video import *
 from sklearn.metrics import mean_squared_error
 from keras.utils.generic_utils import CustomObjectScope
 from keras.models import load_model
@@ -25,17 +25,17 @@ GRID_ROW = ""
 GRID_COL = ""
 
 # Check data directory
-if not len(sys.argv) is 4:
-    print("Usage : python test_model.py [MapName] [GridRow] [GridCol] [TestStart] [TestEnd]")
+if not len(sys.argv) is 5:
+    print("Usage : python test_model.py [MapName] [GridRow] [GridCol] [predict_frame]")
     exit(1)
 else:
     mapName = sys.argv[1]
     GRID_ROW = int(sys.argv[2])
     GRID_COL = int(sys.argv[3])
+    predict_frame = int(sys.argv[4])
 
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
-npyDir = "%s/video/test/%s/%s" % (MODEL_DATASET_DIR, mapName, grid)
-
+npyDir = "%s/video/test/%s/%s_%d" % (MODEL_TEST_DATASET_DIR, mapName, grid, predict_frame)
 if not os.path.exists("%s/video/%s" % (RESULTS_DIR, mapName)):
     os.makedirs("%s/video/%s" % (RESULTS_DIR, mapName))
 
@@ -92,6 +92,80 @@ class DataGenerator(keras.utils.Sequence):
 
         return X, y
 
+def callModel(model_name, HEIGHT, WIDTH, num_classes, seq):
+    if model_name == 'ResNet_50':
+        return ResNet_50(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_50_CBAM':
+        return ResNet_50_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_50_SE':
+        return ResNet_50_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_50_GCBAM':
+        return ResNet_50_GCBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_101':
+        return ResNet_101(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_152':
+        return ResNet_152(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'ResNeXt_50':
+        return ResNeXt_50(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNeXt_101':
+        return ResNeXt_101(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNeXt_101_LSTM':
+        return ResNeXt_101_LSTM(HEIGHT, WIDTH, num_classes, seq)
+
+    if model_name == 'DenseNet_121':
+        return DenseNet_121(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_169':
+        return DenseNet_169(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201':
+        return DenseNet_201(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201_CBAM':
+        return DenseNet_201_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201_SE':
+        return DenseNet_201_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201_GCBAM':
+        return DenseNet_201_GCBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_264':
+        return DenseNet_264(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'InceptionResNet_v2':
+        return InceptionResNet_v2(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_CBAM':
+        return InceptionResNet_v2_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_SE':
+        return InceptionResNet_v2_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_GCBAM':
+        return InceptionResNet_v2_GCBAM(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'Inception_v3':
+        return Inception_v3(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Inception_v3_CBAM':
+        return Inception_v3_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Inception_v3_SE':
+        return Inception_v3_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_SE':
+        return InceptionResNet_v2_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Inception_v3_GCBAM':
+        return Inception_v3_GCBAM(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'MobileNet':
+        return MobileNet(HEIGHT, WIDTH, num_classes)
+    if model_name == 'MobileNet_CBAM':
+        return MobileNet_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'MobileNet_SE':
+        return MobileNet_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'MobileNet_GCBAM':
+        return MobileNet_GCBAM(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'Xception':
+        return Xception(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Xception_CBAM':
+        return Xception_CBAM(HEIGHT, WIDTH, num_classes)
+
+    else:
+        print("Error: you input the wrong model name !")
+        exit(1)
+
 #####################################################
 # Test DNN model
 #####################################################
@@ -119,55 +193,38 @@ testLabel = np.array(testLabel)
 
 
 # Parameters
+batch_size = 16
 params = {'dim': (seq, HEIGHT, WIDTH),
-          'batch_size': 19,
+          'batch_size': batch_size,
           'n_classes': num_classes,
           'n_channels': 3,
           'shuffle': True}
 
 # Generators
 testing_generator = DataGenerator(partition['test'], labels, **params)
-'''
-from newModel.myNewModel import InceptionResNet_v2_LSTM
-from newModel.myNewModel import ResNet_50_LSTM
-from newModel.myNewModel import ResNet_101_LSTM
-from newModel.myNewModel import ResNet_152_LSTM
-from newModel.myNewModel import Inception_v3_LSTM
-from newModel.myNewModel import MobileNet_LSTM
-from newModel.myNewModel import Xception_LSTM
-from newModel.myNewModel import DenseNet_121_LSTM
-from newModel.myNewModel import DenseNet_121_CBAM_LSTM
-from newModel.myNewModel import DenseNet_121_SE_LSTM
-from newModel.myNewModel import DenseNet_121_GCBAM_LSTM
-from newModel.myNewModel import DenseNet_169_LSTM
-from newModel.myNewModel import DenseNet_201_LSTM
-from newModel.myNewModel import DenseNet_264_LSTM
-from newModel.myNewModel import ResNeXt_50_LSTM
-from newModel.myNewModel import ResNeXt_50_CBAM_LSTM
-from newModel.myNewModel import ResNeXt_50_SE_LSTM
-from newModel.myNewModel import ResNeXt_50_GCBAM_LSTM
-from newModel.myNewModel import ResNeXt_101_LSTM
-from newModel.myNewModel import ResNeXt_101_CBAM_LSTM
-from newModel.myNewModel import ResNeXt_101_SE_LSTM
-from newModel.myNewModel import ResNeXt_101_GCBAM_LSTM
-'''
+
 
 # Test
-modelName = 'ResNeXt_101_SE_LSTM_AUG'
+
+modelName = MODEL_TEST_NAME
+
+
 with CustomObjectScope({'relu6': keras.layers.advanced_activations.ReLU(6.),'DepthwiseConv2D': keras.layers.DepthwiseConv2D}):
-    model = keras.models.load_model("%s/video/%s_saved_models/%s" % (MODELS_DIR, grid, modelName), compile=False)
+    model = keras.models.load_model("%s/video/%s_%d_saved_models/%s" % (MODELS_DIR, grid, predict_frame, modelName), compile=False)
 model.summary()
-predictions = model.predict_generator(testing_generator, steps=100)
+predictions = model.predict_generator(testing_generator, steps=500, workers=6)
+
 
 index = 0
 totalRMS = 0
 rmsList = []
-f = open("%s/video/%s/%s_%s_RMSE.txt" % (RESULTS_DIR, mapName, grid, modelName), 'w')
+f = open("%s/video/%s/%s_%d_%s_RMSE.txt" % (RESULTS_DIR, mapName, grid, predict_frame, modelName), 'w')
 for testSetNum in range(MODEL_TEST_START_MAP_NUM-1, MODEL_TEST_END_MAP_NUM):
     rms = sqrt(mean_squared_error(predictions[testSetNum], testLabel[testSetNum]))
     f.write(str(rms) + '\n')
     rmsList.append(rms)
     totalRMS = totalRMS + rms
+    print(testSetNum)
 
 totalRMS = totalRMS / MODEL_TEST_END_MAP_NUM
 maxRMSList = []

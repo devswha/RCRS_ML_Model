@@ -24,7 +24,7 @@ grid = "%dx%d" % (GRID_ROW, GRID_COL)
 # Log
 now = datetime.datetime.now().strftime("%d %H:%M:%S")
 print('[INFO][%s] Image label start' % now)
-print('[INFO] Data sets root: %s/%s' % (LABEL_DATASET_DIR, mapName))
+print('[INFO] Data sets root: %s/%s' % (LABEL_TRAIN_DATASET_DIR, mapName))
 print('[INFO] Label %s #%d ~ #%d data sets' % (mapName, LABEL_TRAIN_START_MAP_NUM, LABEL_TRAIN_END_MAP_NUM))
 
 # Filtering and Labeling the images
@@ -32,7 +32,7 @@ print('[INFO] Label %s #%d ~ #%d data sets' % (mapName, LABEL_TRAIN_START_MAP_NU
 # Labeling : depend on the time step limit and civilians HP
 HPListIndex = 0
 for dataSetNum in range(LABEL_TRAIN_START_MAP_NUM, LABEL_TRAIN_END_MAP_NUM+1):
-    dataSetPath = "%s/raw/train/generated_image/%s/%s_%d" % (LABEL_DATASET_DIR, mapName, mapName, dataSetNum)
+    dataSetPath = "%s/raw/train/generated_image/%s/%s_%d" % (LABEL_TRAIN_DATASET_DIR, mapName, mapName, dataSetNum)
 
     # Read information files for labeling
     mapInfoFile = open("%s/Parse/mapInfo.txt" % dataSetPath, 'r')

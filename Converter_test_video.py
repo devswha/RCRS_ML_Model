@@ -1,4 +1,4 @@
-from myModule import *
+from module.myModule_video import *
 import numpy as np
 import cv2
 
@@ -21,7 +21,7 @@ else:
 # Load path/class_id video file:
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
 
-npyDir = "%s/video/test/%s/%s_%s" % (CONVERT_DATASET_DIR, mapName, grid, predict_frame)
+npyDir = "%s/video/test/%s/%s_%s" % (CONVERT_TEST_DATASET_DIR, mapName, grid, predict_frame)
 if not os.path.exists(npyDir):
     os.makedirs(npyDir)
 
@@ -42,10 +42,10 @@ for dataSetNum in range(CONVERT_TEST_START_MAP_NUM, CONVERT_TEST_END_MAP_NUM + 1
     # Select random time step
     pathList = []
     labelList = []
-    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (CONVERT_DATASET_DIR, mapName, mapName, dataSetNum)
+    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (CONVERT_TEST_DATASET_DIR, mapName, mapName, dataSetNum)
     rawImgListFile = open("%s/Label/%s/ImageList.txt" % (dataSetPath, grid), "r")
     for line in rawImgListFile.readlines():
-        pathList.append(line.split(' ')[0])
+        pathList.append("%s/Image/%s" % (dataSetPath, line.split(' ')[0].split('/')[-1]))
         label = line.split(' ')[1:]
         label[-1] = label[-1].rstrip('\n')
         label = list(map(int, label))
@@ -67,7 +67,7 @@ for dataSetNum in range(CONVERT_TEST_START_MAP_NUM, CONVERT_TEST_END_MAP_NUM + 1
         npyTrainLabelData.append(labelList[seq_len+i-1])
     '''
 
-    for i in range(seq_len, 190, 10):
+    for i in range(seq_len, 160, 10):
         # Save video to npy
         npyTrainSequenceData = []
         for index in range(i-seq_len, i):

@@ -17,7 +17,7 @@ else:
 # Load path/class_id image file:
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
 
-npyDir = "%s/image/train/%s/%s" % (CONVERT_DATASET_DIR, mapName, grid)
+npyDir = "%s/image/train/%s/%s" % (CONVERT_TRAIN_DATASET_DIR, mapName, grid)
 if not os.path.exists(npyDir):
     os.makedirs(npyDir)
 
@@ -37,7 +37,7 @@ for dataSetNum in range(CONVERT_TRAIN_START_MAP_NUM, CONVERT_TRAIN_END_MAP_NUM +
     # Select random time step
     pathList = []
     labelList = []
-    dataSetPath = "%s/raw/train/generated_image/%s/%s_%d" % (CONVERT_DATASET_DIR, mapName, mapName, dataSetNum)
+    dataSetPath = "%s/raw/train/generated_image/%s/%s_%d" % (CONVERT_TRAIN_DATASET_DIR, mapName, mapName, dataSetNum)
     rawImgListFile = open("%s/Label/%s/ImageList.txt" % (dataSetPath, grid), "r")
     for line in rawImgListFile.readlines():
         pathList.append("%s/Image/%s" % (dataSetPath, line.split(' ')[0].split('/')[-1]))

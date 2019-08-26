@@ -26,7 +26,7 @@ if not os.path.exists("%s/%s/%s" % (MODELS_DIR, mapName, grid)):
 # Log
 now = datetime.datetime.now().strftime("%d %H:%M:%S")
 print('[INFO][%s] Image label start' % now)
-print('[INFO] Data sets root: %s/%s' % (LABEL_DATASET_DIR, mapName))
+print('[INFO] Data sets root: %s/%s' % (LABEL_TEST_DATASET_DIR, mapName))
 print('[INFO] Label %s #%d ~ #%d data sets' % (mapName, LABEL_TEST_START_MAP_NUM, LABEL_TEST_END_MAP_NUM))
 
 # Filtering and Labeling the images
@@ -34,7 +34,7 @@ print('[INFO] Label %s #%d ~ #%d data sets' % (mapName, LABEL_TEST_START_MAP_NUM
 # Labeling : depend on the time step limit and civilians HP
 HPListIndex = 0
 for dataSetNum in range(LABEL_TEST_START_MAP_NUM, LABEL_TEST_END_MAP_NUM+1):
-    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (LABEL_DATASET_DIR, mapName, mapName, dataSetNum)
+    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (LABEL_TEST_DATASET_DIR, mapName, mapName, dataSetNum)
 
     # Read information files for labeling
     mapInfoFile = open("%s/Parse/mapInfo.txt" % dataSetPath, 'r')

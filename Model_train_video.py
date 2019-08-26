@@ -1,10 +1,8 @@
 from __future__ import absolute_import, division, print_function
-from module.myModule import *
+from module.myModule_video import *
 from tensorflow import reset_default_graph
 from matplotlib import pyplot
-
 from module.myModel import *
-
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.callbacks import ReduceLROnPlateau
 from keras.optimizers import Adam
@@ -20,6 +18,7 @@ import matplotlib.pyplot as plt
 mapName = ""
 GRID_ROW = ""
 GRID_COL = ""
+predict_frame = 1
 
 def lr_schedule(epoch):
     lr = 1e-3
@@ -28,19 +27,21 @@ def lr_schedule(epoch):
     print('Learning rate: ', lr)
     return lr
 
-if not len(sys.argv) is 4:
-    print("Usage : python Model_train_video.py [Map name] [Grid row] [Grid col]")
+if not len(sys.argv) is 5:
+    print("Usage : python Model_train_video.py [Map name] [Grid row] [Grid col] [predict_frame]")
     exit(1)
 else:
     mapName = sys.argv[1]
     GRID_ROW = int(sys.argv[2])
     GRID_COL = int(sys.argv[3])
+    predict_frame = int(sys.argv[4])
 
 # Load path/class_id video file:
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
-npyDir = "%s/video/train/%s/%s" % (MODEL_DATASET_DIR, mapName, grid)
+npyDir = "%s/video/train/%s/%s_%d" % (MODEL_TRAIN_DATASET_DIR, mapName, grid, predict_frame)
 if not os.path.exists("%s/video/%s" % (MODELS_DIR, mapName)):
     os.makedirs("%s/video/%s" % (MODELS_DIR, mapName))
+print(npyDir)
 
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
@@ -94,6 +95,80 @@ class DataGenerator(keras.utils.Sequence):
 
         return X, y
 
+def callModel(model_name, HEIGHT, WIDTH, num_classes, seq):
+    if model_name == 'ResNet_50':
+        return ResNet_50(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_50_CBAM':
+        return ResNet_50_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_50_SE':
+        return ResNet_50_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_50_GCBAM':
+        return ResNet_50_GCBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_101':
+        return ResNet_101(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNet_152':
+        return ResNet_152(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'ResNeXt_50':
+        return ResNeXt_50(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNeXt_101':
+        return ResNeXt_101(HEIGHT, WIDTH, num_classes)
+    if model_name == 'ResNeXt_101_LSTM':
+        return ResNeXt_101_LSTM(HEIGHT, WIDTH, num_classes, seq)
+
+    if model_name == 'DenseNet_121':
+        return DenseNet_121(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_169':
+        return DenseNet_169(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201':
+        return DenseNet_201(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201_CBAM':
+        return DenseNet_201_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201_SE':
+        return DenseNet_201_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_201_GCBAM':
+        return DenseNet_201_GCBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'DenseNet_264':
+        return DenseNet_264(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'InceptionResNet_v2':
+        return InceptionResNet_v2(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_CBAM':
+        return InceptionResNet_v2_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_SE':
+        return InceptionResNet_v2_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_GCBAM':
+        return InceptionResNet_v2_GCBAM(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'Inception_v3':
+        return Inception_v3(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Inception_v3_CBAM':
+        return Inception_v3_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Inception_v3_SE':
+        return Inception_v3_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'InceptionResNet_v2_SE':
+        return InceptionResNet_v2_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Inception_v3_GCBAM':
+        return Inception_v3_GCBAM(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'MobileNet':
+        return MobileNet(HEIGHT, WIDTH, num_classes)
+    if model_name == 'MobileNet_CBAM':
+        return MobileNet_CBAM(HEIGHT, WIDTH, num_classes)
+    if model_name == 'MobileNet_SE':
+        return MobileNet_SE(HEIGHT, WIDTH, num_classes)
+    if model_name == 'MobileNet_GCBAM':
+        return MobileNet_GCBAM(HEIGHT, WIDTH, num_classes)
+
+    if model_name == 'Xception':
+        return Xception(HEIGHT, WIDTH, num_classes)
+    if model_name == 'Xception_CBAM':
+        return Xception_CBAM(HEIGHT, WIDTH, num_classes)
+
+    else:
+        print("Error: you input the wrong model name !")
+        exit(1)
+
 #####################################################
 # Train DNN model
 #####################################################
@@ -103,7 +178,7 @@ num_classes = GRID_ROW * GRID_COL
 WIDTH = 256
 HEIGHT = 192
 weight_decay = 0.00005
-seq = 9
+seq = int(SEQUENCE_TIME_STEP)
 
 # Load train data
 trainImage = []
@@ -113,6 +188,10 @@ partition['validation'] = []
 labels = {}
 
 val_split = ((MODEL_TRAIN_END_MAP_NUM - MODEL_TRAIN_START_MAP_NUM + 1) // 10) * 2
+print(val_split)
+print(MODEL_TRAIN_START_MAP_NUM)
+print(MODEL_TRAIN_END_MAP_NUM+1-val_split)
+print(MODEL_TRAIN_END_MAP_NUM+1-val_split)
 for dataSetNum in range(MODEL_TRAIN_START_MAP_NUM, MODEL_TRAIN_END_MAP_NUM+1-val_split):
     partition['train'].append('%s/train_data_video-%d' % (npyDir, dataSetNum))
 for dataSetNum in range(MODEL_TRAIN_END_MAP_NUM+1-val_split, MODEL_TRAIN_END_MAP_NUM+1):
@@ -136,9 +215,11 @@ training_generator = DataGenerator(partition['train'], labels, **params)
 validation_generator = DataGenerator(partition['validation'], labels, **params)
 
 # Train
-model = ResNeXt_101_LSTM(HEIGHT, WIDTH, num_classes, seq)
-modelName = 'ResNeXt_101_AUG_4'
-save_dir = os.path.join(os.getcwd(), '%s/video/%s_saved_models' % (MODELS_DIR, grid))
+modelName = MODEL_TRAIN_NAME
+model = callModel(modelName, HEIGHT, WIDTH, num_classes, seq)
+print(modelName)
+
+save_dir = os.path.join(os.getcwd(), '%s/video/%s_%d_saved_models' % (MODELS_DIR, grid, predict_frame))
 if not os.path.isdir(save_dir):
     os.makedirs(save_dir)
 filepath = os.path.join(save_dir, modelName)
@@ -159,7 +240,7 @@ early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', min_delta=0, 
                                                mode='auto', baseline=None, restore_best_weights=True)
 history = model.fit_generator(generator=training_generator, validation_data=validation_generator,
                               use_multiprocessing=True, workers=6, epochs=nb_epoch, callbacks=callbacks)
-model.save("%s/video/%s/%s_%s.h5" % (MODELS_DIR, mapName, grid, modelName))
+model.save("%s/video/%s/%s_%d_%s.h5" % (MODELS_DIR, mapName, grid, predict_frame, modelName))
 
 # View the train and validation loss graph
 '''

@@ -24,12 +24,15 @@ for line in lines:
         LABEL_TRAIN_START_MAP_NUM = int(line.split()[1])
     if "LABEL_TRAIN_END_MAP_NUM" in line:
         LABEL_TRAIN_END_MAP_NUM = int(line.split()[1])
+    if "LABEL_TRAIN_DATASET_DIR" in line:
+        LABEL_TRAIN_DATASET_DIR = os.path.abspath(line.split()[1])
     if "LABEL_TEST_START_MAP_NUM" in line:
         LABEL_TEST_START_MAP_NUM = int(line.split()[1])
     if "LABEL_TEST_END_MAP_NUM" in line:
         LABEL_TEST_END_MAP_NUM = int(line.split()[1])
-    if "LABEL_DATASET_DIR" in line:
-        LABEL_DATASET_DIR = os.path.abspath(line.split()[1])
+    if "LABEL_TEST_DATASET_DIR" in line:
+        LABEL_TEST_DATASET_DIR = os.path.abspath(line.split()[1])
+
 
     ###########################################################
     # Convert constant
@@ -38,12 +41,15 @@ for line in lines:
         CONVERT_TRAIN_START_MAP_NUM = int(line.split()[1])
     if "CONVERT_TRAIN_END_MAP_NUM" in line:
         CONVERT_TRAIN_END_MAP_NUM = int(line.split()[1])
+    if "CONVERT_TRAIN_DATASET_DIR" in line:
+        CONVERT_TRAIN_DATASET_DIR = os.path.abspath(line.split()[1])
     if "CONVERT_TEST_START_MAP_NUM" in line:
         CONVERT_TEST_START_MAP_NUM = int(line.split()[1])
     if "CONVERT_TEST_END_MAP_NUM" in line:
         CONVERT_TEST_END_MAP_NUM = int(line.split()[1])
-    if "CONVERT_DATASET_DIR" in line:
-        CONVERT_DATASET_DIR = os.path.abspath(line.split()[1])
+    if "CONVERT_TEST_DATASET_DIR" in line:
+        CONVERT_TEST_DATASET_DIR = os.path.abspath(line.split()[1])
+
 
     ###########################################################
     # ML constant
@@ -54,16 +60,18 @@ for line in lines:
         MODEL_TRAIN_START_MAP_NUM = int(line.split()[1])
     if "MODEL_TRAIN_END_MAP_NUM" in line:
         MODEL_TRAIN_END_MAP_NUM = int(line.split()[1])
+    if "MODEL_TRAIN_DATASET_DIR" in line:
+        MODEL_TRAIN_DATASET_DIR = os.path.abspath(line.split()[1])
     if "MODEL_TEST_NAME" in line:
         MODEL_TEST_NAME = line.split()[1]
     if "MODEL_TEST_START_MAP_NUM" in line:
         MODEL_TEST_START_MAP_NUM = int(line.split()[1])
     if "MODEL_TEST_END_MAP_NUM" in line:
         MODEL_TEST_END_MAP_NUM = int(line.split()[1])
+    if "MODEL_TEST_DATASET_DIR" in line:
+        MODEL_TEST_DATASET_DIR = os.path.abspath(line.split()[1])
     if "MODELS_DIR" in line:
         MODELS_DIR = os.path.abspath(line.split()[1])
-    if "MODEL_DATASET_DIR" in line:
-        MODEL_DATASET_DIR = os.path.abspath(line.split()[1])
     if "RESULTS_DIR" in line:
         RESULTS_DIR = os.path.abspath(line.split()[1])
 

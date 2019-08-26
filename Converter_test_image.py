@@ -1,4 +1,4 @@
-from myModule import *
+from module.myModule_image import *
 import numpy as np
 import cv2
 
@@ -17,7 +17,7 @@ else:
 # Load path/class_id image file:
 grid = "%dx%d" % (GRID_ROW, GRID_COL)
 
-npyDir = "%s/image/test/%s/%s" % (DATASET_DIR, mapName, grid)
+npyDir = "%s/image/test/%s/%s" % (CONVERT_TEST_DATASET_DIR, mapName, grid)
 if not os.path.exists(npyDir):
     os.makedirs(npyDir)
 
@@ -37,7 +37,7 @@ for dataSetNum in range(CONVERT_TEST_START_MAP_NUM, CONVERT_TEST_END_MAP_NUM + 1
     # Select random time step
     pathList = []
     labelList = []
-    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (CONVERT_DATASET_DIR, mapName, mapName, dataSetNum)
+    dataSetPath = "%s/raw/test/generated_image/%s/%s_%d" % (CONVERT_TEST_DATASET_DIR, mapName, mapName, dataSetNum)
     rawImgListFile = open("%s/Label/%s/ImageList.txt" % (dataSetPath, grid), "r")
     for line in rawImgListFile.readlines():
         pathList.append(line.split(' ')[0])
